@@ -1,0 +1,2 @@
+fucodo\HealthCheck\Domain\Service\HealthCheckService:
+  scope: singleton

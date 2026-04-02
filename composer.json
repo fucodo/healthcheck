@@ -1,0 +1,20 @@
+{
+    "description": "",
+    "type": "neos-package",
+    "name": "fucodo/healthcheck",
+    "license": "MIT",
+    "require": {
+        "neos/flow": "*",
+        "fucodo/registry": "^0.3.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "fucodo\\HealthCheck\\": "Classes/"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "fucodo.healthcheck"
+        }
+    }
+}
