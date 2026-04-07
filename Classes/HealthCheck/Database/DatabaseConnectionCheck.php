@@ -1,8 +1,9 @@
 <?php
 
-namespace fucodo\HealthCheck\HealthCheck;
+namespace fucodo\HealthCheck\HealthCheck\Database;
 
 use fucodo\HealthCheck\Domain\Service\HealthCheckInterface;
+use fucodo\HealthCheck\HealthCheck\AbstractDatabaseHealthCheck;
 
 class DatabaseConnectionCheck extends AbstractDatabaseHealthCheck implements HealthCheckInterface
 {

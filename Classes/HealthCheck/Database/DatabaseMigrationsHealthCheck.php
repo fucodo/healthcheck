@@ -1,10 +1,11 @@
 <?php
 
-namespace fucodo\HealthCheck\HealthCheck;
+namespace fucodo\HealthCheck\HealthCheck\Database;
 
 use fucodo\HealthCheck\Domain\Service\HealthCheckInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Service;
+use fucodo\HealthCheck\HealthCheck\AbstractDatabaseHealthCheck;
 
 class DatabaseMigrationsHealthCheck extends AbstractDatabaseHealthCheck implements HealthCheckInterface
 {

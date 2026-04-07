@@ -15,21 +15,13 @@ abstract class AbstractDatabaseHealthCheck extends AbstractHealthCheck implement
     protected $connection;
 
 
-
+    protected const POSITION = 100;
     public function getName(): string
     {
         return 'Database check ' . get_class($this);
     }
-
-
-
     protected function runCheckInternal(): void
     {
         $this->connection->executeQuery('SELECT 1');
-    }
-
-    public function getPosition(): string
-    {
-        return '100';
     }
 }

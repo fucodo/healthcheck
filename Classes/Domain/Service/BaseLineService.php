@@ -9,10 +9,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\PositionalArraySorter;
 
-/**
- * @Flow\Scope("singleton")
- */
-class HealthCheckService
+class BaseLineService
 {
     /**
      * @Flow\Inject
@@ -30,7 +27,7 @@ class HealthCheckService
     {
         $healthChecks = [];
 
-        $testClasses = $this->getDiagnoses();
+        $testClasses = $this->getBaseLineGenerators();
 
         foreach ($testClasses as $testClass) {
             $healthChecks[] = $this->getInstance($testClass);
@@ -41,24 +38,21 @@ class HealthCheckService
         return HealthCheckResult::fromArray($healthChecks);
     }
 
-    protected function getInstance(string $diagnosisClassName): HealthCheckInterface
+    protected function getInstance(string $diagnosisClassName): HealthCheckBaselineGeneratorInterface
     {
         return $this->objectManager->get($diagnosisClassName);
     }
 
-    /**
-     * @return HealthCheckInterface[]
-     */
-    protected function getDiagnoses(): array
+    public function getBaseLineGenerators(): array
     {
-        $diagnoses = [];
-        $diagnosisClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(HealthCheckInterface::class);
-        foreach ($diagnosisClassNames as $className) {
+        $baselineGenerators = [];
+        $baselineClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(HealthCheckBaselineGeneratorInterface::class);
+        foreach ($baselineClassNames as $className) {
             if ($this->reflectionService->isClassAbstract($className)) {
                 continue;
             }
-            $diagnoses[] = $className;
+            $baselineGenerators[] = $className;
         }
-        return $diagnoses;
+        return $baselineGenerators;
     }
 }

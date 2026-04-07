@@ -11,6 +11,8 @@ abstract class AbstractHealthCheck implements HealthCheckInterface
 
     protected string $message = '';
 
+    protected const POSITION = 500;
+
     public function isHealthy(): bool
     {
         if ($this->healthy !== null) {
@@ -25,6 +27,8 @@ abstract class AbstractHealthCheck implements HealthCheckInterface
         }
         return $this->healthy ?? false;
     }
+
+    protected abstract function runCheckInternal(): void;
 
     protected function markAsHealthy(string $message = ''): void
     {
@@ -54,6 +58,6 @@ abstract class AbstractHealthCheck implements HealthCheckInterface
 
     public function getPosition(): string
     {
-        return '500';
+        return (string)static::POSITION;
     }
 }
