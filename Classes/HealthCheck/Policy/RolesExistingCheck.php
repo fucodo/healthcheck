@@ -4,7 +4,7 @@ namespace fucodo\HealthCheck\HealthCheck\Policy;
 
 use fucodo\HealthCheck\HealthCheck\AbstractHealthCheck;
 use Neos\Flow\Annotations as Flow;
-class RolesExistingCheck extends AbstractHealthCheck
+class RolesExistingCheck extends AbstractHealthCheck implements \fucodo\HealthCheck\Domain\Service\HealthCheckBaselineGeneratorInterface
 {
 
     /**
@@ -23,13 +23,18 @@ class RolesExistingCheck extends AbstractHealthCheck
 
     protected function runCheckInternal(): void
     {
+        $message = $this->getState();
+        $this->markAsHealthy(implode(PHP_EOL, $message));
+    }
+
+    public function getState(): array
+    {
         $message = [];
 
         $roles = $this->policyService->getRoles();
         foreach ($roles as $role) {
             $message[] = $role->getIdentifier();
         }
-
-        $this->markAsHealthy(implode(PHP_EOL, $message));
+        return $message;
     }
 }
