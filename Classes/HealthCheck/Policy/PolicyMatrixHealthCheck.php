@@ -25,11 +25,10 @@ class PolicyMatrixHealthCheck extends AbstractHealthCheck implements \fucodo\Hea
     protected const POSITION = 120;
 
     /**
-     * get that from the Policy Yaml lateron, maybe we can use the reflection service to do that.
+     * @Flow\InjectConfiguration(type="Policy")
+     * @var array
      */
-    protected $types = [
-        \Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege::class
-    ];
+    protected $policyConfiguration = [];
 
     public function getName(): string
     {
@@ -41,6 +40,10 @@ class PolicyMatrixHealthCheck extends AbstractHealthCheck implements \fucodo\Hea
         $this->markAsHealthy('currently we ask the roleservice for all grants, which is not optimal, as we do not see if abstained or denied');
     }
 
+    protected function getPrivilegeTargetsTypes(): array
+    {
+        return array_keys($this->policyConfiguration['privilegeTargets']);
+    }
 
 
     public function getState(): array
@@ -49,7 +52,7 @@ class PolicyMatrixHealthCheck extends AbstractHealthCheck implements \fucodo\Hea
         /** @var Role $role */
         foreach ($this->policyService->getRoles(true) as $role) {
             $grants[$role->getIdentifier()] = [];
-            foreach ($this->types as $type) {
+            foreach ($this->getPrivilegeTargetsTypes() as $type) {
                 $grants[$role->getIdentifier()][$type] = [];
                 /** @var PrivilegeInterface $privilege */
                 foreach ($this->policyService->getAllPrivilegesByType($type) as $privilege) {
