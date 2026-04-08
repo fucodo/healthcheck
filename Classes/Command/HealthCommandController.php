@@ -41,16 +41,18 @@ class HealthCommandController extends CommandController
                 $this->outputLine('Unknown diagnostic - ' . get_class($diagnose));
                 continue;
             }
+            $healthy = true;
             if (!$diagnose->isHealthy()) {
+                $healthy = false;
                 $exitCode = 1;
             }
             $this->outputLine(
                 sprintf(
                     '%s%s - %s%s',
-                    $diagnose->isHealthy() ? '<success>' : '<error>',
-                    $diagnose->isHealthy() ? '[✔]' : '[ⅹ]',
+                    $healthy ? '<success>' : '<error>',
+                    $healthy ? '[✔]' : '[ⅹ]',
                     $diagnose->getName(),
-                    $diagnose->isHealthy() ? '</success>' : '</error>',
+                    $healthy ? '</success>' : '</error>',
                 )
             );
             if ($diagnose->getMessage() !== '') {
@@ -66,25 +68,50 @@ class HealthCommandController extends CommandController
 
         $baselines = $this->baseLineService->run();
         foreach ($baselines->getAllDiagnosis() as $diagnose) {
+
             if (!$diagnose instanceof \fucodo\HealthCheck\Domain\Service\HealthCheckBaselineGeneratorInterface) {
                 $this->outputLine('Unknown baseline - ' . get_class($diagnose));
                 continue;
             }
-            if (!$diagnose->isHealthy()) {
+            $healthy = $diagnose->isHealthy();
+            $this->outputLine(
+                sprintf(
+                    '%s%s - %s%s',
+                    $healthy ? '<success>' : '<error>',
+                    $healthy ? '[✔]' : '[ⅹ]',
+                    $diagnose->getName(),
+                    $healthy ? '</success>' : '</error>',
+                )
+            );
+            $this->baseLineService->persistHealthCheck($diagnose);
+        }
+        $this->sendAndExit($exitCode);
+    }
+
+    public function checkBaselineCommand(): void
+    {
+        $exitCode = 0;
+
+        $baselines = $this->baseLineService->run();
+        foreach ($baselines->getAllDiagnosis() as $diagnose) {
+            $healthy = true;
+            if (!$diagnose instanceof \fucodo\HealthCheck\Domain\Service\HealthCheckBaselineGeneratorInterface) {
+                $this->outputLine('Unknown baseline - ' . get_class($diagnose));
+                continue;
+            }
+            if (!$this->baseLineService->compareBaselines($diagnose)) {
                 $exitCode = 1;
+                $healthy = false;
             }
             $this->outputLine(
                 sprintf(
                     '%s%s - %s%s',
-                    $diagnose->isHealthy() ? '<success>' : '<error>',
-                    $diagnose->isHealthy() ? '[✔]' : '[ⅹ]',
+                    $healthy ? '<success>' : '<error>',
+                    $healthy ? '[✔]' : '[ⅹ]',
                     $diagnose->getName(),
-                    $diagnose->isHealthy() ? '</success>' : '</error>',
+                    $healthy ? '</success>' : '</error>',
                 )
             );
-            if ($diagnose->getMessage() !== '') {
-                $this->outputFormatted($diagnose->getMessage() . PHP_EOL, [], 4);
-            }
         }
         $this->sendAndExit($exitCode);
     }
