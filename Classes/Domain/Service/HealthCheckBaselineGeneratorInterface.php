@@ -2,7 +2,7 @@
 
 namespace fucodo\HealthCheck\Domain\Service;
 
-interface HealthCheckBaselineGeneratorInterface
+interface HealthCheckBaselineGeneratorInterface extends HealthCheckInterface, HealthCheckWithStateInterface
 {
 
 }
